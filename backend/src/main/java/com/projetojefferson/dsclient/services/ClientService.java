@@ -14,5 +14,8 @@ public class ClientService {
 	@Autowired
 	private ClientRepository repository;
 	
-	List<Client> list = repository.findAll();
+	public List<Client> findall(ListRequest listRequest){
+		List<Client> list = repository.findAll();
+	}
+	
 }

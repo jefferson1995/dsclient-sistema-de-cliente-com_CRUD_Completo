@@ -15,7 +15,8 @@ public class Client implements Serializable {
 	private Integer children;
 	
 	//Construtor sem argumentos.
-	public Client() {	
+	public Client(String name) {	
+		this.name = name;
 	}
 
 	//Construtor com argumentos
