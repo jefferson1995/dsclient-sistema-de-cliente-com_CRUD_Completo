@@ -1,22 +1,35 @@
 package com.projetojefferson.dsclient.entities;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Date;
 import java.util.Objects;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+import javax.persistence.Table;
 
+@Entity
+@Table(name = "tb_client")
 public class Client implements Serializable {
 private static final long serialVersionUID = 1L;
 	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String name, cpf;
 	private Double income;
 	private Date birthDate;
 	private Integer children;
 	
+	
 	//Construtor sem argumentos.
-	public Client(String name) {	
-		this.name = name;
+	public Client() {	
 	}
 
 	//Construtor com argumentos
@@ -79,6 +92,8 @@ private static final long serialVersionUID = 1L;
 	public void setChildren(Integer children) {
 		this.children = children;
 	}
+	
+	
 
 	@Override
 	public int hashCode() {
