@@ -1,10 +1,11 @@
 package com.projetojefferson.dsclient.resources;
 
 import java.net.URI;
-import java.text.ParseException;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -26,14 +28,24 @@ public class ClientResource {
 	@Autowired
 	private ClientService service;
 
-	// Método para buscar todos clientes
+	// buscar todos clientes
 	@GetMapping
-	public ResponseEntity<List<ClientDTO>> findall() throws ParseException {
-		List<ClientDTO> list = service.findAll();
+	public ResponseEntity<Page<ClientDTO>> findallPaged(
+
+			@RequestParam(value = "page", defaultValue = "0") Integer page, // Nº das paginas
+			@RequestParam(value = "linesPerPage", defaultValue = "12") Integer linesPerPage, // quantidade de registros
+																								// por paginas
+			@RequestParam(value = "direction", defaultValue = "ASC") String direction, // ascendente
+			@RequestParam(value = "orderBy", defaultValue = "name") String orderBy // ordernar a busca
+
+	) {
+
+		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
+		Page<ClientDTO> list = service.findAllPaged(pageRequest);
 		return ResponseEntity.ok().body(list);
 	}
 
-	// Método para buscar por id
+	// buscar por id
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<ClientDTO> findById(@PathVariable Long id) {
 
@@ -43,7 +55,7 @@ public class ClientResource {
 
 	}
 
-	// Método para inserir novo cliente
+	// inserir novo cliente
 
 	@PostMapping
 	public ResponseEntity<ClientDTO> insert(@RequestBody ClientDTO dto) {
@@ -56,16 +68,16 @@ public class ClientResource {
 		return ResponseEntity.created(uri).body(dto);
 	}
 
-	// Método para atualizar cliente
+	// atualizar cliente
 
 	@PutMapping(value = "/{id}")
 	public ResponseEntity<ClientDTO> update(@PathVariable Long id, @RequestBody ClientDTO dto) {
 		dto = service.update(id, dto);
 		return ResponseEntity.ok().body(dto);
 	}
-	
-	//deletar cliente
-	
+
+	// deletar cliente
+
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<ClientDTO> update(@PathVariable Long id) {
 		service.delete(id);

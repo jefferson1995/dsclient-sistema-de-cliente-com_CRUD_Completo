@@ -1,10 +1,15 @@
 package com.projetojefferson.dsclient.services;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,16 +25,16 @@ public class ClientService {
 
 	// Método para buscar dados paginados
 	@Transactional
-	public List<ClientDTO> findAll() {
-		List<Client> list = repository.findAll();
-		return list.stream().map(x -> new ClientDTO(x)).collect(Collectors.toList());
+	public Page<ClientDTO> findAllPaged(PageRequest pageRequest) {
+		Page<Client> list = repository.findAll(pageRequest);
+		return list.map(x -> new ClientDTO(x));
 	}
 
 	// Método para buscar dados por ID
 	@Transactional
 	public ClientDTO findByID(Long id) {
 		Optional<Client> obj = repository.findById(id);
-		Client entity = obj.orElseThrow();
+		Client entity = obj.orElseThrow(() -> new EntityNotFoundException("id not found"));
 		return new ClientDTO(entity);
 	}
 
@@ -45,10 +50,25 @@ public class ClientService {
 	//Método para atualizar client
 	@Transactional
 	public ClientDTO update(Long id, ClientDTO dto) {
-		Client entity = repository.getOne(id);
-		copyDtoToEntity(dto, entity);
-		entity = repository.save(entity);
-		return new ClientDTO(entity);
+		try {
+			Client entity = repository.getOne(id);
+			copyDtoToEntity(dto, entity);
+			entity = repository.save(entity);
+			return new ClientDTO(entity);
+		}catch (EntityNotFoundException e) {
+			throw new EntityNotFoundException("id not found");
+		}
+		
+	}
+	
+
+	public void delete(Long id) {
+		try {
+			repository.deleteById(id);
+		}catch (EmptyResultDataAccessException e) {
+			throw new EntityNotFoundException("id not found: " + id);
+		}
+		
 	}
 
 	private void copyDtoToEntity(ClientDTO dto, Client entity) { // Método auxiliar para adicionar um novo client ou
@@ -64,7 +84,4 @@ public class ClientService {
 
 	}
 
-	public void delete(Long id) {
-		repository.deleteById(id);
-	}
 }
