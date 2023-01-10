@@ -19,14 +19,14 @@ public class ClientService {
 	private ClientRepository repository;
 
 	// Método para buscar dados paginados
-	@Transactional(readOnly = true)
+	@Transactional
 	public List<ClientDTO> findAll() {
 		List<Client> list = repository.findAll();
 		return list.stream().map(x -> new ClientDTO(x)).collect(Collectors.toList());
 	}
 
 	// Método para buscar dados por ID
-	@Transactional(readOnly = true)
+	@Transactional
 	public ClientDTO findByID(Long id) {
 		Optional<Client> obj = repository.findById(id);
 		Client entity = obj.orElseThrow();
@@ -34,9 +34,19 @@ public class ClientService {
 	}
 
 	// Método para salvar um novo cliente.
+	@Transactional
 	public ClientDTO insert(ClientDTO dto) {
 		Client entity = new Client();
 		copyDtoToEntity(dto, entity); // método auxiliar
+		entity = repository.save(entity);
+		return new ClientDTO(entity);
+	}
+
+	//Método para atualizar client
+	@Transactional
+	public ClientDTO update(Long id, ClientDTO dto) {
+		Client entity = repository.getOne(id);
+		copyDtoToEntity(dto, entity);
 		entity = repository.save(entity);
 		return new ClientDTO(entity);
 	}
@@ -52,5 +62,9 @@ public class ClientService {
 		entity.setIncome(dto.getIncome());
 		entity.setChildren(dto.getChildren());
 
+	}
+
+	public void delete(Long id) {
+		repository.deleteById(id);
 	}
 }
