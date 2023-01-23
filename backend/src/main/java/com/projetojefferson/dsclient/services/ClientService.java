@@ -1,15 +1,13 @@
 package com.projetojefferson.dsclient.services;
 
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,8 +23,8 @@ public class ClientService {
 
 	// Método para buscar dados paginados
 	@Transactional
-	public Page<ClientDTO> findAllPaged(PageRequest pageRequest) {
-		Page<Client> list = repository.findAll(pageRequest);
+	public Page<ClientDTO> findAllPaged(Pageable pageable) {
+		Page<Client> list = repository.findAll(pageable);
 		return list.map(x -> new ClientDTO(x));
 	}
 

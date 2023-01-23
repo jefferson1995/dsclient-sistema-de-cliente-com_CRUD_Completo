@@ -5,6 +5,7 @@ import java.net.URI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -30,18 +30,9 @@ public class ClientResource {
 
 	// buscar todos clientes
 	@GetMapping
-	public ResponseEntity<Page<ClientDTO>> findallPaged(
+	public ResponseEntity<Page<ClientDTO>> findallPaged(Pageable pageable) {
 
-			@RequestParam(value = "page", defaultValue = "0") Integer page, // Nº das paginas
-			@RequestParam(value = "linesPerPage", defaultValue = "12") Integer linesPerPage, // quantidade de registros
-																								// por paginas
-			@RequestParam(value = "direction", defaultValue = "ASC") String direction, // ascendente
-			@RequestParam(value = "orderBy", defaultValue = "name") String orderBy // ordernar a busca
-
-	) {
-
-		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-		Page<ClientDTO> list = service.findAllPaged(pageRequest);
+		Page<ClientDTO> list = service.findAllPaged(pageable);
 		return ResponseEntity.ok().body(list);
 	}
 
