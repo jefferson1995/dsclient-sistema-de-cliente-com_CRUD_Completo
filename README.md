@@ -14,7 +14,7 @@ CRUD completo de web services REST para acessar um recurso de clientes, contendo
 
 
 ## Modelo conceitual
-![Modelo Conceitual](https://github.com/acenelio/assets/raw/main/dsclient/diagrama.png)
+![Modelo Conceitual](https://github.com/jefferson1995/dsclient/blob/main/Assets/diagrama.png)
 
 # Tecnologias utilizadas
 ## Back end
